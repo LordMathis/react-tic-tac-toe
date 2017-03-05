@@ -2,6 +2,9 @@ var React = require('react');
 var Board = require('../components/Board');
 
 var BoardContainer = React.createClass({
+  handleClick: function(i, event) {
+    alert(i);
+  },
   getInitialState: function() {
     return {
       status: [0,0,0,0,0,0,0,0,0]
@@ -9,7 +12,8 @@ var BoardContainer = React.createClass({
   },
   render: function() {
     return (
-      <Board status={this.state.status} />
+      <Board status={this.state.status}
+             onClick={this.handleClick} />
     )
   }
 });
