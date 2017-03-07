@@ -1,41 +1,26 @@
-function minimax(node, player, boardState) {
-  boardState[node[0], node[1]] = player;
+function minimaxSearch(node, player, boardState) {
+  boardState[node[0]][node[1]] = player;
+
+  console.log(JSON.stringify(boardState), JSON.stringify(node), player);
 
   if (isBoardFull(boardState)) {
     return evaluate(boardState);
   }
 
-  if (player === 1) {
-    var bestValue = -20;
+  var bestValue = player === 1 ? -20 : 20;
 
-    for (var i = 0; i < boardState.length; i++) {
-      for (var j = 0; j < boardState.length; j++) {
-        if (boardState[i][j] === 0) {
-          var value = minimax([i,j], 2, boardState);
-          bestValue = Math.max(value, bestValue);
-        }
+  for (var i = 0; i < boardState.length; i++) {
+    for (var j = 0; j < boardState.length; j++) {
+      if (boardState[i][j] === 0) {
+        var nextPlayer = player === 1 ? 2 : 1
+        var value = minimaxSearch([i,j], nextPlayer, boardState);
+        bestValue = player === 1 ? Math.max(value, bestValue) : Math.min(value, bestValue);
       }
     }
-
-    return bestValue;
-
-  } else if (player === 2) {
-    var bestValue = 20;
-
-    for (var i = 0; i < boardState.length; i++) {
-      for (var j = 0; j < boardState.length; j++) {
-        if (boardState[i][j] === 0) {
-          var value = minimax([i,j], 1, boardState);
-          bestValue = Math.min(value, bestValue);
-        }
-      }
-    }
-
-    return bestValue;
-  } else {
-    console.warn("There was en error in minimax: Player can only be 1 or 2");
   }
 
+  boardState[node[0]][node[1]] = 0;
+  return bestValue;
 
 }
 
@@ -51,8 +36,7 @@ function isBoardFull(boardState) {
   return true;
 }
 
-function evaluate(boardState) {
-
+function evaluateRows(boardState) {
   var numO = 0;
   var numX = 0;
 
@@ -76,8 +60,12 @@ function evaluate(boardState) {
     }
   }
 
-  numO = 0;
-  numX = 0;
+  return 0;
+}
+
+function evaluateColumns(boardState) {
+  var numO = 0;
+  var numX = 0;
 
   for (var i = 0; i < boardState.length; i++) {
 
@@ -99,8 +87,12 @@ function evaluate(boardState) {
     }
   }
 
-  numO = 0;
-  numX = 0;
+  return 0;
+}
+
+function evaluateDiagonals(boardState) {
+  var numO = 0;
+  var numX = 0;
 
   for (var i = 0; i < boardState.length; i++) {
     if (boardState[i][i] === 1) {
@@ -137,9 +129,26 @@ function evaluate(boardState) {
 
 }
 
+function evaluate(boardState) {
+  var rows = evaluateRows(boardState);
+  if (rows != 0) {
+    return rows;
+  }
+
+  var columns = evaluateColumns(boardState);
+  if (columns != 0) {
+    return columns
+  }
+
+  return evaluateDiagonals(boardState);
+
+}
+
 var minimax = {
   getNextMove: function(player, boardState) {
     var bestMove = [];
+
+    console.log(JSON.stringify(boardState));
 
     if (player === 1) {
       var bestValue = -20;
@@ -147,7 +156,7 @@ var minimax = {
       for (var i = 0; i < boardState.length; i++) {
         for (var j = 0; j < boardState.length; j++) {
           if (boardState[i][j] === 0) {
-            var value = minimax([i,j], 2, boardState);
+            var value = minimaxSearch([i,j], 1, boardState);
             if (value > bestValue) {
               bestMove = [i,j];
               bestValue = value;
@@ -162,7 +171,7 @@ var minimax = {
       for (var i = 0; i < boardState.length; i++) {
         for (var j = 0; j < boardState.length; j++) {
           if (boardState[i][j] === 0) {
-            var value = minimax([i,j], 1, boardState);
+            var value = minimaxSearch([i,j], 2, boardState);
             if (value < bestValue) {
               bestMove = [i,j];
               bestValue = value;
