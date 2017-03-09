@@ -10,15 +10,23 @@ html, body, #app, .container {
   border-bottom: 2px solid black;
 }
 
+.board-row {
+  width: 240px;
+  height: 80px;
+  line-height: 70px;
+}
+
 .node {
   width: 70px;
   height: 70px;
+  line-height: 70px;
   display: inline-block;
   background-color: black;
   color: white;
   margin: 5px;
   text-align: center;
-  font-size: 50px;
+  font-size: 46px;
+  vertical-align: top;
 }
 
 .flex-container {

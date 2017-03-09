@@ -5,18 +5,6 @@ var Modal = ReactBootstrap.Modal;
 var Button = ReactBootstrap.Button;
 var minimax = require('../utils/minimax');
 
-function computersTurn() {
-  var nextMove = minimax.getNextMove(BoardContainer.state.currentPlayer, boardState);
-  var index = nextMove[0] * 3 + nextMove[1];
-  var currentPlayer = BoardContainer.state.currentPlayer;
-  newStatus = BoardContainer.state.status;
-  newStatus[index] = currentPlayer;
-  BoardContainer.setState({
-    status: newStatus,
-    currentPlayer: 3 - BoardContainer.state.currentPlayer
-  });
-}
-
 var BoardContainer = React.createClass({
   handleClick: function(i, event) {
     if (this.state.game && (this.state.currentPlayer === this.state.playerSide) && (this.state.status[i] === 0)) {
@@ -38,9 +26,6 @@ var BoardContainer = React.createClass({
       winner: 0
     }
   },
-  componentDidMount: function() {
-
-  },
   selectSide: function(side) {
     this.setState({
       playerSide: side,
@@ -55,11 +40,16 @@ var BoardContainer = React.createClass({
   },
   isEndGame: function() {
     var boardState = this.convertStatus();
-    //console.log(boardState);
     var score = minimax.isEndGame(boardState);
 
     if (score === 0) {
-      if (this.state.currentPlayer !== this.state.playerSide) {
+      if (minimax.isBoardFull(boardState)) {
+        this.setState({
+          winner: 3,
+          game: false,
+          showEndGame: true
+        });
+      } else if (this.state.currentPlayer !== this.state.playerSide) {
         this.computersTurn(boardState);
       }
     } else if (score == 10) {
@@ -89,10 +79,7 @@ var BoardContainer = React.createClass({
     });
   },
   computersTurn: function(boardState) {
-    //console.log(boardState);
     var nextMove = minimax.getNextMove(this.state.currentPlayer, boardState);
-
-    //console.log(nextMove);
 
     var index = nextMove[0] * 3 + nextMove[1];
     var currentPlayer = this.state.currentPlayer;
@@ -108,6 +95,17 @@ var BoardContainer = React.createClass({
     });
   },
   render: function() {
+    var endGameString = "";
+    if (!this.state.game) {
+      if (this.state.winner === 3) {
+        endGameString = "It's a draw!";
+      } else if (this.state.winner === this.state.playerSide) {
+        endGameString = "You win!";
+      } else {
+        endGameString = "You lose!";
+      }
+    }
+
     return (
       <div>
         <Board status={this.state.status}
@@ -119,7 +117,7 @@ var BoardContainer = React.createClass({
          container={this}
          aria-labelledby="contained-modal-title"
        >
-         <Modal.Header closeButton>
+         <Modal.Header>
            <Modal.Title id="contained-modal-title">Select your side</Modal.Title>
          </Modal.Header>
          <Modal.Body>
@@ -130,17 +128,18 @@ var BoardContainer = React.createClass({
            <Button onClick={() => this.selectSide(2)}>O</Button>
          </Modal.Footer>
        </Modal>
+
        <Modal
          show={this.state.showEndGame}
          onHide={close}
          container={this}
          aria-labelledby="contained-modal-title"
        >
-         <Modal.Header closeButton>
+         <Modal.Header>
            <Modal.Title id="contained-modal-title">Game over</Modal.Title>
          </Modal.Header>
          <Modal.Body>
-            {this.state.winner === this.state.playerSide ? "You win!" : "You lose!"}
+            {endGameString}
          </Modal.Body>
          <Modal.Footer>
            <Button onClick={function() {
@@ -155,6 +154,7 @@ var BoardContainer = React.createClass({
              }.bind(this)}>Play again</Button>
          </Modal.Footer>
        </Modal>
+
      </div>
     )
   }
