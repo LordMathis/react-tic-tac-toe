@@ -1,0 +1,51 @@
+html, body, #app, .container {
+  height: 100%;
+}
+
+.font-primary {
+  font-family: 'Inconsolata', monospace;
+}
+
+.header {
+  border-bottom: 2px solid black;
+}
+
+.board-row {
+  width: 240px;
+  height: 80px;
+  line-height: 70px;
+}
+
+.node {
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  display: inline-block;
+  background-color: black;
+  color: white;
+  margin: 5px;
+  text-align: center;
+  font-size: 46px;
+  vertical-align: top;
+}
+
+.flex-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  padding-top: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.board {
+  height: 240px;
+  width: 240px;
+}
+
+h1 {
+  font-size: 4em;
+}
