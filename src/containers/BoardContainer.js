@@ -1,9 +1,8 @@
 var React = require('react');
 var Board = require('../components/Board');
-var ReactBootstrap = require('react-bootstrap');
-var Modal = ReactBootstrap.Modal;
-var Button = ReactBootstrap.Button;
 var minimax = require('../utils/minimax');
+var ChoiceModal = require('../components/ChoiceModal');
+var EndGameModal = require('../components/EndGameModal');
 
 var BoardContainer = React.createClass({
   handleClick: function(i, event) {
@@ -26,7 +25,7 @@ var BoardContainer = React.createClass({
       winner: 0
     }
   },
-  selectSide: function(side) {
+  handleSelectSide: function(side) {
     this.setState({
       playerSide: side,
       showStartGame: false,
@@ -94,6 +93,16 @@ var BoardContainer = React.createClass({
       this.isEndGame();
     });
   },
+  handlePlayAgain: function() {
+    this.setState({
+      status: [0,0,0,0,0,0,0,0,0],
+      game: false,
+      currentPlayer: 1,
+      showStartGame: true,
+      showEndGame: false,
+      winner: 0
+    });
+  },
   render: function() {
     var endGameString = "";
     if (!this.state.game) {
@@ -111,49 +120,15 @@ var BoardContainer = React.createClass({
         <Board status={this.state.status}
              onClick={this.handleClick} />
 
-       <Modal
-         show={this.state.showStartGame}
-         onHide={close}
-         container={this}
-         aria-labelledby="contained-modal-title"
-       >
-         <Modal.Header>
-           <Modal.Title id="contained-modal-title">Select your side</Modal.Title>
-         </Modal.Header>
-         <Modal.Body>
-            X starts first
-         </Modal.Body>
-         <Modal.Footer>
-           <Button onClick={() => this.selectSide(1)}>X</Button>
-           <Button onClick={() => this.selectSide(2)}>O</Button>
-         </Modal.Footer>
-       </Modal>
+        <ChoiceModal
+          show={this.state.showStartGame}
+          onSelectSide={this.handleSelectSide}/>
 
-       <Modal
-         show={this.state.showEndGame}
-         onHide={close}
-         container={this}
-         aria-labelledby="contained-modal-title"
-       >
-         <Modal.Header>
-           <Modal.Title id="contained-modal-title">Game over</Modal.Title>
-         </Modal.Header>
-         <Modal.Body>
-            {endGameString}
-         </Modal.Body>
-         <Modal.Footer>
-           <Button onClick={function() {
-               this.setState({
-                 status: [0,0,0,0,0,0,0,0,0],
-                 game: false,
-                 currentPlayer: 1,
-                 showStartGame: true,
-                 showEndGame: false,
-                 winner: 0
-               });
-             }.bind(this)}>Play again</Button>
-         </Modal.Footer>
-       </Modal>
+
+        <EndGameModal
+          show={this.state.showEndGame}
+          onPlayAgain={this.handlePlayAgain}
+          endGameString={endGameString}/>
 
      </div>
     )
