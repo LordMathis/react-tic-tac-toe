@@ -13,4 +13,4 @@ Minimalistic Tic Tac Toe game built with React. AI is driven by a minimax algori
 `npm run start`
 
 * Build for production
-`npm run production`
+`npm run build`
